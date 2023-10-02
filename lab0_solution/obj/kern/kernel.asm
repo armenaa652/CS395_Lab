@@ -1226,7 +1226,7 @@ xchg(volatile uint32_t *addr,uint32_t newval){
   80042001c4:	00 00 00 
   80042001c7:	ff d0                	callq  *%rax
   80042001c9:	be 00 00 00 00       	mov    $0x0,%esi
-  80042001ce:	48 bf d0 53 2a 04 80 	movabs $0x80042a53d0,%rdi
+  80042001ce:	48 bf 26 68 4a 04 80 	movabs $0x80044a6826,%rdi
   80042001d5:	00 00 00 
   80042001d8:	48 b8 b2 8f 20 04 80 	movabs $0x8004208fb2,%rax
   80042001df:	00 00 00 

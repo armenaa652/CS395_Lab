@@ -59,12 +59,19 @@ bool vmx_sel_resume(int num) {
  *  to simplify the implementation.
  */
 bool vmx_check_support() {
-	uint32_t eax, ebx, ecx, edx;
-	cpuid( 0, &eax, &ebx, &ecx, &edx );
-	/* Your code here */
-    panic("vmx_check_support not implemented\n");
-	cprintf("[VMM] VMX extension not supported.\n");
-	return false;
+    uint32_t eax, ebx, ecx, edx;
+    bool result = false;  // Set default result to false
+
+    cpuid( 1, &eax, &ebx, &ecx, &edx );
+
+    if (BIT(ecx, 5)) {  // Check VMX bit in ECX
+        result = true;
+		cprintf("[VMM] VMX extension supported.\n");
+    } else {
+        cprintf("[VMM] VMX extension not supported.\n");
+    }
+
+    return result;  // Single exit point
 }
 
 /* This function reads the VMX-specific MSRs
@@ -81,10 +88,25 @@ bool vmx_check_support() {
  *   EPT is available.
  */
 bool vmx_check_ept() {
-	/* Your code here */
-    panic("vmx_check_ept not implemented\n");
-	cprintf("[VMM] EPT extension not supported.\n");
-	return false;
+    bool result = false;  // Set default result to false
+    uint64_t msr;
+
+    // Check secondary controls in IA32_VMX_PROCBASED_CTLS
+    msr = read_msr(IA32_VMX_PROCBASED_CTLS);
+    if (BIT(msr, 31 + 32)) {  // Use BIT macro for consistency with earlier style
+        // Check for EPT support in IA32_VMX_PROCBASED_CTLS2
+        msr = read_msr(IA32_VMX_PROCBASED_CTLS2);
+        if (BIT(msr, 1 + 32)) {
+            cprintf("[VMM] EPT extension supported.\n");
+            result = true;
+        } else {
+            cprintf("[VMM] EPT extension not supported. - EPT not enabled\n");
+        }
+    } else {
+        cprintf("[VMM] EPT extension not supported. - secondary controls not set\n");
+    }
+
+    return result;  // Single exit point
 }
 
 /* Checks if curr_val is compatible with fixed0 and fixed1
