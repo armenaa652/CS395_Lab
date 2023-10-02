@@ -1,0 +1,149 @@
+\documentclass[11pt]{article}
+\usepackage[letterpaper, margin=2cm]{geometry}
+\usepackage{titlesec}
+\usepackage{mdframed}
+\usepackage[dvipsnames]{xcolor} % for color names, must be loaded before tikz
+\usepackage{ifthen}
+\usepackage{comment}
+\usepackage{fancyhdr}
+\usepackage{fancyvrb}
+\usepackage{titling}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usepackage{amsmath, amssymb, amsthm}
+
+\providecommand{\due}{}
+\lhead{Virtualization} \rhead{The University of Texas}
+\lfoot{\due} \cfoot{} \rfoot{Page \thepage}
+\renewcommand{\footrulewidth}{0.4pt}
+\pagestyle{fancy}
+
+% Eliminates the spacing in the title that remains from the empty author section.
+\preauthor{}
+\postauthor{}
+
+\titleformat{\section}[runin]{\large\bfseries}{\thesection .}{3pt}{}
+\titleformat{\subsection}[runin]{\bfseries}{\thesubsection)}{3pt}{}
+\renewcommand\thesubsection{\alph{subsection}}
+
+% Defines the solution environment. Toggle solutions between true and false to either show or hide solutions. Also, the solution environment takes an optional argument of arbitrary text to be inserted in the solution header.
+\newboolean{solutions}
+\setboolean{solutions}{true}
+\ifthenelse{\boolean{solutions}}
+{\newenvironment{solution}{\begin{mdframed}[skipbelow=0pt, linecolor=White, backgroundcolor=Green!10]\textbf{Solution:}}{\end{mdframed}}}
+{\excludecomment{solution}}
+
+\allowdisplaybreaks
+
+\begin{document}
+
+\title{Virtualization\\Pre-lab Questions --- \#1}
+\date{\due}
+
+\maketitle
+
+\noindent \textbf{Point total:} 7
+\\ All homework assignments are weighted equally in the final grade. Point values are unique to each lab assignment.
+
+\textbf{Note:} For all problems which ask you to explain your reasoning or show your work, you do not need to show every step of each calculation, but the answer should include an explanation \emph{written with words} of what you did.  Even when work is not required to be shown, it’s a good idea to include anyways so that you can earn partial credit.
+
+\section{Question [1 point]}
+
+What does the \texttt{cpuid} assembly instruction do in this function?
+
+\begin{solution}
+    \item The \texttt{cpuid} assembly instruction provides details about the processor. When \texttt{cpuid} is called with an initial input value of 0 in the EAX register, it returns the highest function number the CPU supports and the vendor ID string. This 12-character ASCII string identifies the manufacturer and is distributed across the EBX, EDX, and ECX registers.
+\end{solution}
+
+
+\section{Question [1 point]}
+
+How is the function providing values back to you to use?
+
+\begin{solution}
+    \item The \texttt{cpuid} function retrieves information directly into the CPU registers EAX, EBX, ECX, and EDX using inline assembly. After the instruction is executed, it utilizes the provided pointers (\texttt{eaxp}, \texttt{ebxp}, \texttt{ecxp}, \texttt{edxp}) to relay these values to specific memory locations. This method allows the function, \texttt{vmx\_check\_support}, to access the results of the \texttt{cpuid} instruction by referencing the variables `eax`, `ebx`, `ecx`, and `edx`.
+
+\end{solution}
+
+
+\section{Question [1 point]}
+
+What are the results of \texttt{eax}, \texttt{ecx}, and \texttt{ebx} values in hexadecimal?
+
+\begin{solution}
+\item The hexadecimal results for the registers are:
+    \begin{itemize}
+        \item \texttt{EAX (rax)}: \texttt{0x8003fffe60}
+        \item \texttt{ECX (rcx)}: \texttt{0x444d4163}
+        \item \texttt{EBX (rbx)}: \texttt{0x0}
+    \end{itemize}
+\end{solution}
+
+
+\section{Question [1 point]}
+
+Now examine the values of these variables as strings. Hint: look at the values in hexadecimal and translate them to strings, in the order \texttt{ebx}, \texttt{edx}, \texttt{ecx}. What do you observe? The \href{https://en.wikipedia.org/wiki/CPUID}{Wikipedia page} for the cpuid instruction may help you interpret this output.
+
+\begin{solution}
+\begin{enumerate}
+    \item Given the register values after the \texttt{cpuid} call for an AMD processor:
+    \begin{itemize}
+        \item \texttt{EBX (rbx)}: \texttt{0x68747541} $\rightarrow$ Translates to ASCII characters "Auth"
+        \item \texttt{EDX (rdx)}: \texttt{0x69746e65} $\rightarrow$ Translates to ASCII characters "entic"
+        \item \texttt{ECX (rcx)}: \texttt{0x444d4163} $\rightarrow$ Translates to ASCII characters "cAMD"
+    \end{itemize}
+    Collating them in the order of EBX, EDX, and ECX, we derive the vendor string: "AuthenticAMD". This string is an identifier for AMD processors.
+\end{enumerate}
+\end{solution}
+
+
+\section{Question [1 point]}
+
+There is a reference in each \texttt{Env} struct for another struct called \texttt{VmxGuestInfo}. What kind of information does this struct hold?
+
+\begin{solution}
+
+    \begin{description}
+        \item[\texttt{phys\_sz}] 64-bit value, indicating storage size.
+        
+        \item[\texttt{vmcs}] Points to the VMCS, which manages VM state and controls its execution.
+        
+        \item[\texttt{exception\_bmap}] Bitmap indicating which exceptions the hypervisor handles.
+        
+        \item[\texttt{io\_bmap\_a}, \texttt{io\_bmap\_b}] I/O bitmaps that control guest access to I/O ports. Different bitmaps may represent different port sets.
+        
+        \item[\texttt{msr\_count}] Count of MSRs being managed.
+        
+        \item[\texttt{msr\_host\_area}, \texttt{msr\_guest\_area}] Memory areas for host and guest MSRs, specialized CPU registers.
+        
+        \item[\texttt{vcpunum}] Identifier for the associated virtual CPU.
+    \end{description}
+    
+    The \texttt{VmxGuestInfo} struct holds data for virtual machine management in VMX, including exception tracking, I/O access, and MSR handling.
+\end{solution}
+
+
+\section{Question [1 point]}
+
+From \href{https://www.cs.utexas.edu/~vijay/cs378-f17/projects/64-ia-32-architectures-software-developer-vol-3c-part-3-manual.pdf}{this Intel guide}, find out what the vmcs pointer in this struct stands for, and what it purpose it serves.
+
+\begin{solution}
+The VMCS is central to Intel's VMX virtualization. It holds state areas for the host and the guest, ensuring smooth transitions between the Virtual Machine Monitor (VMM) and the virtual machine. It also dictates how the virtual machine behaves during execution. The \texttt{vmcs} pointer in \texttt{VmxGuestInfo} tracks the VMCS location for a specific guest, ensuring proper virtual machine management and control.
+
+\end{solution}
+
+
+\section{Question [1 point]}
+
+What assembly instruction initializes the \texttt{vmcs} pointer? In other words, how do we change the \texttt{vmcs} pointer?
+
+\begin{solution}
+
+To change or load a new address into the VMCS pointer, the \texttt{VMPTRLD} instruction is utilized. This instruction effectively updates the VMCS pointer to reference a new VMCS region, thereby allowing dynamic management of different VMCS regions for varied virtual machine contexts.
+
+\end{solution}
+
+
+\end{document}
+
