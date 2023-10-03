@@ -53,7 +53,7 @@
 What does the \texttt{cpuid} assembly instruction do in this function?
 
 \begin{solution}
-    \item The \texttt{cpuid} assembly instruction provides details about the processor. When \texttt{cpuid} is called with an initial input value of 0 in the EAX register, it returns the highest function number the CPU supports and the vendor ID string. This 12-character ASCII string identifies the manufacturer and is distributed across the EBX, EDX, and ECX registers.
+    \item The \texttt{cpuid} assembly instruction provides details about the processor. When \texttt{cpuid} is called with an initial input value of 0 in the EAX register, it returns the highest calling parameter the CPU supports and the vendor ID string. This 12-character ASCII string identifies the manufacturer and is distributed across the EBX, EDX, and ECX registers.
 \end{solution}
 
 
@@ -78,6 +78,7 @@ What are the results of \texttt{eax}, \texttt{ecx}, and \texttt{ebx} values in h
         \item \texttt{ECX (rcx)}: \texttt{0x444d4163}
         \item \texttt{EBX (rbx)}: \texttt{0x0}
     \end{itemize}
+According to the CPUID wikipedia page, the return of the EAX register should hold the value of the highest basic calling parameter, but the AMD processor makes it hard to confirm.
 \end{solution}
 
 
@@ -86,15 +87,39 @@ What are the results of \texttt{eax}, \texttt{ecx}, and \texttt{ebx} values in h
 Now examine the values of these variables as strings. Hint: look at the values in hexadecimal and translate them to strings, in the order \texttt{ebx}, \texttt{edx}, \texttt{ecx}. What do you observe? The \href{https://en.wikipedia.org/wiki/CPUID}{Wikipedia page} for the cpuid instruction may help you interpret this output.
 
 \begin{solution}
+Given the hexadecimal values stored in the registers,the converted ASCII representations is as follows:
+
 \begin{enumerate}
-    \item Given the register values after the \texttt{cpuid} call for an AMD processor:
+    \item \textbf{RCX (rcx):} 0x444d4163
     \begin{itemize}
-        \item \texttt{EBX (rbx)}: \texttt{0x68747541} $\rightarrow$ Translates to ASCII characters "Auth"
-        \item \texttt{EDX (rdx)}: \texttt{0x69746e65} $\rightarrow$ Translates to ASCII characters "entic"
-        \item \texttt{ECX (rcx)}: \texttt{0x444d4163} $\rightarrow$ Translates to ASCII characters "cAMD"
+        \item 0x44 translates to ``D''
+        \item 0x4D translates to ``M''
+        \item 0x41 translates to ``A''
+        \item 0x63 translates to ``c''
     \end{itemize}
-    Collating them in the order of EBX, EDX, and ECX, we derive the vendor string: "AuthenticAMD". This string is an identifier for AMD processors.
+    Together, these bytes form the string ``DMAc''.
+
+    \item \textbf{RDX (rdx):} 0x69746e65
+    \begin{itemize}
+        \item 0x69 translates to ``i''
+        \item 0x74 translates to ``t''
+        \item 0x6e translates to ``n''
+        \item 0x65 translates to ``e''
+    \end{itemize}
+    Together, these bytes form the string ``itne''.
+
+    \item \textbf{RSI (rsi):} 0x68747541
+    \begin{itemize}
+        \item 0x68 translates to ``h''
+        \item 0x74 translates to ``t''
+        \item 0x75 translates to ``u''
+        \item 0x41 translates to ``A''
+    \end{itemize}
+    Together, these bytes form the string ``htuA''.
 \end{enumerate}
+
+When we combine the strings from the RCX, RDX, and RSI registers in that order, we get DMAcitnehtuA. Reversed, this becomes AuthenticAMD, a signature for AMD processors. Tthe value we expected to be in the RBX register was found in the RSI register, while RBX held a value of 0x0, providing no useful information. We think this discrepancy might stem from using an AMD rather than an Intel processor.
+
 \end{solution}
 
 
@@ -105,13 +130,13 @@ There is a reference in each \texttt{Env} struct for another struct called \text
 \begin{solution}
 
     \begin{description}
-        \item[\texttt{phys\_sz}] 64-bit value, indicating storage size.
+        \item[\texttt{phys\_sz}] 64-bit value, the storage size.
         
-        \item[\texttt{vmcs}] Points to the VMCS, which manages VM state and controls its execution.
+        \item[\texttt{vmcs}] Points to the VMCS, which manages the VM state and controls its execution.
         
         \item[\texttt{exception\_bmap}] Bitmap indicating which exceptions the hypervisor handles.
         
-        \item[\texttt{io\_bmap\_a}, \texttt{io\_bmap\_b}] I/O bitmaps that control guest access to I/O ports. Different bitmaps may represent different port sets.
+        \item[\texttt{io\_bmap\_a}, \texttt{io\_bmap\_b}] I/O bitmaps that control guest access to I/O ports.
         
         \item[\texttt{msr\_count}] Count of MSRs being managed.
         
@@ -129,7 +154,7 @@ There is a reference in each \texttt{Env} struct for another struct called \text
 From \href{https://www.cs.utexas.edu/~vijay/cs378-f17/projects/64-ia-32-architectures-software-developer-vol-3c-part-3-manual.pdf}{this Intel guide}, find out what the vmcs pointer in this struct stands for, and what it purpose it serves.
 
 \begin{solution}
-The VMCS is central to Intel's VMX virtualization. It holds state areas for the host and the guest, ensuring smooth transitions between the Virtual Machine Monitor (VMM) and the virtual machine. It also dictates how the virtual machine behaves during execution. The \texttt{vmcs} pointer in \texttt{VmxGuestInfo} tracks the VMCS location for a specific guest, ensuring proper virtual machine management and control.
+The VMCS is central to Intel's VMX virtualization. It holds state areas for the host and the guest, ensuring smooth transitions between the Virtual Machine Monitor (VMM) and the virtual machine. The \texttt{vmcs} pointer in \texttt{VmxGuestInfo} tracks the VMCS location for a specific guest, ensuring proper virtual machine management and control.
 
 \end{solution}
 
