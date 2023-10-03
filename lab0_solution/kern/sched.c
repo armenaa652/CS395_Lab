@@ -42,20 +42,46 @@ sched_yield(void)
 		i = NENV-1;
 	//cprintf("sched_yield searching from %d\n", i);
 
-	// Loop through all the environments at most once.
-	for (j = 1; j <= NENV; j++) {
-		k = (j + i) % NENV;
-		// If this environment is runnable, run it.
-		if (envs[k].env_status == ENV_RUNNABLE) {
-            /* Your code here */
-			env_run(&envs[k]);
-		}
-	}
+    // Loop through all the environments at most once.
+    for (j = 1; j <= NENV; j++) {
+        k = (j + i) % NENV;
+        // If this environment is runnable, run it.
+        if (envs[k].env_status == ENV_RUNNABLE) {
+            
+            #ifdef VMM_GUEST
+				// Check if the environment is a guest.
+				if (envs[k].env_type == ENV_TYPE_GUEST) {
+					// Call vmxon() before running the guest environment.
+					int err = vmxon();
+					if (err) {
+						// Handle the error and skip this iteration.
+						cprintf("vmxon failed with error %d\n", err);
+						continue;
+					}
+				}
+            #endif
 
-	if (curenv && curenv->env_status == ENV_RUNNING) {
-        /* Your code here */
-		env_run(curenv);
-	}
+            env_run(&envs[k]);
+        }
+    }
+
+    if (curenv && curenv->env_status == ENV_RUNNING) {
+        
+        #ifdef VMM_GUEST
+			// Check if the current environment is a guest.
+			if (curenv->env_type == ENV_TYPE_GUEST) {
+				// Call vmxon() before running the current guest environment.
+				int err = vmxon();
+				if (err) {
+					// Handle error.
+					cprintf("vmxon failed with error %d\n", err);
+					return;
+				}
+			}
+        #endif
+
+        env_run(curenv);
+    }
 
 	// sched_halt never returns
 	sched_halt();

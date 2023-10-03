@@ -861,63 +861,63 @@ Linker script and memory map
 .debug_frame
  *(.debug_frame)
 
-.debug_str      0x0000000000000000     0x339e
+.debug_str      0x0000000000000000     0x339c
  *(.debug_str)
- .debug_str     0x0000000000000000      0x63b obj/kern/init.o
-                                        0x6e4 (size before relaxing)
- .debug_str     0x000000000000063b      0x149 obj/kern/console.o
+ .debug_str     0x0000000000000000      0x639 obj/kern/init.o
+                                        0x6e2 (size before relaxing)
+ .debug_str     0x0000000000000639      0x149 obj/kern/console.o
                                         0x2b9 (size before relaxing)
- .debug_str     0x0000000000000784      0x171 obj/kern/monitor.o
+ .debug_str     0x0000000000000782      0x171 obj/kern/monitor.o
                                         0x453 (size before relaxing)
- .debug_str     0x00000000000008f5      0x54c obj/kern/pmap.o
+ .debug_str     0x00000000000008f3      0x54c obj/kern/pmap.o
                                         0xb4e (size before relaxing)
- .debug_str     0x0000000000000e41      0x334 obj/kern/env.o
+ .debug_str     0x0000000000000e3f      0x334 obj/kern/env.o
                                         0xa3c (size before relaxing)
- .debug_str     0x0000000000001175       0x31 obj/kern/kclock.o
+ .debug_str     0x0000000000001173       0x31 obj/kern/kclock.o
                                         0x176 (size before relaxing)
- .debug_str     0x00000000000011a6       0x35 obj/kern/picirq.o
+ .debug_str     0x00000000000011a4       0x35 obj/kern/picirq.o
                                         0x1a9 (size before relaxing)
- .debug_str     0x00000000000011db       0x17 obj/kern/printf.o
+ .debug_str     0x00000000000011d9       0x17 obj/kern/printf.o
                                         0x1ab (size before relaxing)
- .debug_str     0x00000000000011f2      0x282 obj/kern/trap.o
+ .debug_str     0x00000000000011f0      0x282 obj/kern/trap.o
                                         0x923 (size before relaxing)
- .debug_str     0x0000000000001474       0x29 obj/kern/sched.o
+ .debug_str     0x0000000000001472       0x29 obj/kern/sched.o
                                         0x62d (size before relaxing)
- .debug_str     0x000000000000149d      0x345 obj/kern/syscall.o
+ .debug_str     0x000000000000149b      0x345 obj/kern/syscall.o
                                         0x9ea (size before relaxing)
- .debug_str     0x00000000000017e2      0x905 obj/kern/kdebug.o
+ .debug_str     0x00000000000017e0      0x905 obj/kern/kdebug.o
                                        0x100c (size before relaxing)
- .debug_str     0x00000000000020e7       0x93 obj/kern/printfmt.o
+ .debug_str     0x00000000000020e5       0x93 obj/kern/printfmt.o
                                         0x34b (size before relaxing)
- .debug_str     0x000000000000217a       0x27 obj/kern/readline.o
+ .debug_str     0x0000000000002178       0x27 obj/kern/readline.o
                                         0x1e7 (size before relaxing)
- .debug_str     0x00000000000021a1       0x9e obj/kern/string.o
+ .debug_str     0x000000000000219f       0x9e obj/kern/string.o
                                         0x204 (size before relaxing)
- .debug_str     0x000000000000223f      0x25c obj/kern/libdwarf_rw.o
+ .debug_str     0x000000000000223d      0x25c obj/kern/libdwarf_rw.o
                                         0xbfa (size before relaxing)
- .debug_str     0x000000000000249b      0x2dd obj/kern/libdwarf_frame.o
+ .debug_str     0x0000000000002499      0x2dd obj/kern/libdwarf_frame.o
                                         0xb53 (size before relaxing)
- .debug_str     0x0000000000002778      0x1bd obj/kern/libdwarf_lineno.o
+ .debug_str     0x0000000000002776      0x1bd obj/kern/libdwarf_lineno.o
                                         0xba1 (size before relaxing)
- .debug_str     0x0000000000002935      0x144 obj/kern/elf_rw.o
+ .debug_str     0x0000000000002933      0x144 obj/kern/elf_rw.o
                                         0x45e (size before relaxing)
- .debug_str     0x0000000000002a79       0xbe obj/kern/mpconfig.o
+ .debug_str     0x0000000000002a77       0xbe obj/kern/mpconfig.o
                                         0x694 (size before relaxing)
- .debug_str     0x0000000000002b37       0x52 obj/kern/lapic.o
+ .debug_str     0x0000000000002b35       0x52 obj/kern/lapic.o
                                         0x5de (size before relaxing)
- .debug_str     0x0000000000002b89       0x4d obj/kern/spinlock.o
+ .debug_str     0x0000000000002b87       0x4d obj/kern/spinlock.o
                                         0x6a8 (size before relaxing)
- .debug_str     0x0000000000002bd6       0xd6 obj/kern/e1000.o
+ .debug_str     0x0000000000002bd4       0xd6 obj/kern/e1000.o
                                         0x377 (size before relaxing)
- .debug_str     0x0000000000002cac      0x16f obj/kern/pci.o
+ .debug_str     0x0000000000002caa      0x16f obj/kern/pci.o
                                         0x349 (size before relaxing)
- .debug_str     0x0000000000002e1b       0x26 obj/kern/time.o
+ .debug_str     0x0000000000002e19       0x26 obj/kern/time.o
                                         0x105 (size before relaxing)
- .debug_str     0x0000000000002e41       0xb9 obj/vmm/ept.o
+ .debug_str     0x0000000000002e3f       0xb9 obj/vmm/ept.o
                                         0x30f (size before relaxing)
- .debug_str     0x0000000000002efa      0x363 obj/vmm/vmx.o
+ .debug_str     0x0000000000002ef8      0x363 obj/vmm/vmx.o
                                         0xaca (size before relaxing)
- .debug_str     0x000000000000325d      0x141 obj/vmm/vmexits.o
+ .debug_str     0x000000000000325b      0x141 obj/vmm/vmexits.o
                                         0x900 (size before relaxing)
 
 .debug_loc      0x0000000000000000     0x6cdc
